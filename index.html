@@ -7,7 +7,8 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-image: url('https://www.w3schools.com/w3images/forest.jpg');
+      /* Replace this URL with your Simon Says image URL */
+      background-image: url('https://example.com/simon-says-background.jpg');
       background-size: cover;
       background-position: center;
       color: white;
@@ -63,6 +64,22 @@
       font-size: 30px;
       color: red;
     }
+
+    .colorButton {
+      padding: 20px;
+      font-size: 18px;
+      margin: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      border: none;
+    }
+
+    #red { background-color: red; }
+    #blue { background-color: blue; }
+    #green { background-color: green; }
+    #yellow { background-color: yellow; }
+    #jump { background-color: orange; }
+    #clap { background-color: purple; }
   </style>
 </head>
 <body>
@@ -90,10 +107,14 @@
       "Simon says touch the blue button",
       "Simon says touch the green button",
       "Simon says touch the yellow button",
+      "Simon says jump",
+      "Simon says clap",
       "Touch the red button",
       "Touch the blue button",
       "Touch the green button",
-      "Touch the yellow button"
+      "Touch the yellow button",
+      "Jump",
+      "Clap"
     ];
 
     startButton.addEventListener("click", startGame);
@@ -123,10 +144,11 @@
       const randomCommand = getRandomCommand();
       sequence.push(randomCommand);
       showCommand(randomCommand);
+      setTimeout(showButtons, 2000); // Wait before showing buttons
     }
 
     function getRandomCommand() {
-      const randomIndex = Math.floor(Math.random() * 4);
+      const randomIndex = Math.floor(Math.random() * commands.length);
       return commands[randomIndex];
     }
 
@@ -134,23 +156,30 @@
       currentCommand.textContent = command;
       setTimeout(() => {
         currentCommand.textContent = "";
-        getUserInput();
       }, 1500);
     }
 
-    function getUserInput() {
-      const userCommands = ["red", "blue", "green", "yellow"];
+    function showButtons() {
+      // Reset the user options by removing any existing buttons
+      const existingButtons = document.querySelectorAll('.colorButton');
+      existingButtons.forEach(button => button.remove());
+
+      // Create buttons for the user to click based on the command
+      const userCommands = ["red", "blue", "green", "yellow", "jump", "clap"];
       userCommands.forEach(command => {
         const button = document.createElement("button");
-        button.textContent = command;
+        button.textContent = command.charAt(0).toUpperCase() + command.slice(1);
+        button.classList.add("colorButton");
+        button.id = command;
         button.addEventListener("click", () => checkUserChoice(command));
         document.body.appendChild(button);
       });
     }
 
     function checkUserChoice(command) {
-      if (sequence[userSequence.length] === `Simon says touch the ${command} button`) {
-        userSequence.push(`Simon says touch the ${command} button`);
+      const correctCommand = sequence[userSequence.length];
+      if (correctCommand === `Simon says touch the ${command} button` || correctCommand === `Simon says ${command}`) {
+        userSequence.push(correctCommand);
         if (userSequence.length === sequence.length) {
           setTimeout(nextRound, 1000);
         }
