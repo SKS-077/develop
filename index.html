@@ -90,20 +90,23 @@
 
             let isSimonSays = currentCommand.startsWith("Simon says");
 
+            // Correct move (either follow Simon says or ignore when Simon doesn't say)
             if ((followed && isSimonSays) || (!followed && !isSimonSays)) {
                 score++;  // Increase score for correct choices
             } else {
-                score = Math.max(0, score - 1);  // Decrease score for incorrect choices
-            }
-
-            document.getElementById("score").textContent = score;
-
-            // If the player makes a mistake, the game ends
-            if (score < 0) {
+                // Incorrect move, end the game immediately
                 gameOver = true;
                 document.getElementById("game-over-message").style.display = "block";
                 document.getElementById("command").textContent = "Game Over!";
-            } else {
+                document.getElementById("score").textContent = score;  // Show current score when game ends
+                return;
+            }
+
+            // Update score after correct choice
+            document.getElementById("score").textContent = score;
+
+            // Generate next command only if the game isn't over
+            if (!gameOver) {
                 generateCommand();
             }
         }
