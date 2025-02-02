@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simon Says Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-image: url('https://www.w3schools.com/w3images/forest.jpg');
+      background-size: cover;
+      background-position: center;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      text-align: center;
+    }
+
+    #gameContainer {
+      background-color: rgba(0, 0, 0, 0.6);
+      border-radius: 10px;
+      padding: 30px;
+      width: 350px;
+    }
+
+    h1 {
+      font-size: 36px;
+      margin-bottom: 20px;
+    }
+
+    #instructions {
+      font-size: 20px;
+      margin-bottom: 30px;
+    }
+
+    .command {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+
+    #startButton, #retryButton {
+      background-color: #4CAF50;
+      padding: 10px 20px;
+      font-size: 18px;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #retryButton {
+      background-color: #f44336;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    #gameOverMessage {
+      font-size: 30px;
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <div id="gameContainer">
+    <h1>Simon Says</h1>
+    <p id="instructions">Follow Simon's commands, but only if Simon says!</p>
+    <div class="command" id="currentCommand"></div>
+    <button id="startButton">Start Game</button>
+    <p id="gameOverMessage" class="hidden">Game Over! You made a mistake!</p>
+    <button id="retryButton" class="hidden">Retry</button>
+  </div>
+
+  <script>
+    const startButton = document.getElementById("startButton");
+    const retryButton = document.getElementById("retryButton");
+    const currentCommand = document.getElementById("currentCommand");
+    const gameOverMessage = document.getElementById("gameOverMessage");
+
+    let sequence = [];
+    let userSequence = [];
+    let gameInProgress = false;
+
+    const commands = [
+      "Simon says touch the red button",
+      "Simon says touch the blue button",
+      "Simon says touch the green button",
+      "Simon says touch the yellow button",
+      "Touch the red button",
+      "Touch the blue button",
+      "Touch the green button",
+      "Touch the yellow button"
+    ];
+
+    startButton.addEventListener("click", startGame);
+    retryButton.addEventListener("click", restartGame);
+
+    function startGame() {
+      sequence = [];
+      userSequence = [];
+      gameInProgress = true;
+      gameOverMessage.classList.add("hidden");
+      retryButton.classList.add("hidden");
+      startButton.classList.add("hidden");
+      nextRound();
+    }
+
+    function restartGame() {
+      gameOverMessage.classList.add("hidden");
+      retryButton.classList.add("hidden");
+      startButton.classList.remove("hidden");
+      sequence = [];
+      userSequence = [];
+      gameInProgress = false;
+    }
+
+    function nextRound() {
+      userSequence = [];
+      const randomCommand = getRandomCommand();
+      sequence.push(randomCommand);
+      showCommand(randomCommand);
+    }
+
+    function getRandomCommand() {
+      const randomIndex = Math.floor(Math.random() * 4);
+      return commands[randomIndex];
+    }
+
+    function showCommand(command) {
+      currentCommand.textContent = command;
+      setTimeout(() => {
+        currentCommand.textContent = "";
+        getUserInput();
+      }, 1500);
+    }
+
+    function getUserInput() {
+      const userCommands = ["red", "blue", "green", "yellow"];
+      userCommands.forEach(command => {
+        const button = document.createElement("button");
+        button.textContent = command;
+        button.addEventListener("click", () => checkUserChoice(command));
+        document.body.appendChild(button);
+      });
+    }
+
+    function checkUserChoice(command) {
+      if (sequence[userSequence.length] === `Simon says touch the ${command} button`) {
+        userSequence.push(`Simon says touch the ${command} button`);
+        if (userSequence.length === sequence.length) {
+          setTimeout(nextRound, 1000);
+        }
+      } else {
+        gameOver();
+      }
+    }
+
+    function gameOver() {
+      gameInProgress = false;
+      gameOverMessage.classList.remove("hidden");
+      retryButton.classList.remove("hidden");
+    }
+  </script>
+</body>
+</html>
